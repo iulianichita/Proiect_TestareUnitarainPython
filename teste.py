@@ -108,3 +108,48 @@ def test_reset():
     s.rezerva_loc(3, 'A', 30, False)
     s.reseteaza()
     assert s.nr_locuri_ocupate() == 0
+
+# teste aditionale
+
+def test_business_exact_boundary():
+    s = SistemRezervareAvion()
+    pret = s.rezerva_loc(2, 'F', 30, False)
+    assert pret == 150.0
+
+def test_copil_spre_adult():
+    s = SistemRezervareAvion()
+
+    pret_copil = s.rezerva_loc(3, 'A', 12, False)
+    pret_adult = s.rezerva_loc(3, 'B', 13, False)
+
+    assert pret_copil == 50.0
+    assert pret_adult == 100.0
+
+
+def test_adult_spre_senior():
+    s = SistemRezervareAvion()
+
+    pret_adult = s.rezerva_loc(3, 'A', 59, False)
+    pret_senior = s.rezerva_loc(3, 'B', 60, False)
+
+    assert pret_adult == 100.0
+    assert pret_senior == 50.0
+
+def test_bagaj_la_varsta_2():
+    s = SistemRezervareAvion()
+
+    pret = s.rezerva_loc(3, 'A', 2, True)
+
+    assert pret == 70.0
+
+def test_echilibru_parte_dreapta():
+    s = SistemRezervareAvion()
+
+    s.rezerva_loc(3, 'D', 30, False)
+    s.rezerva_loc(3, 'E', 30, False)
+    s.rezerva_loc(3, 'F', 30, False)
+    s.rezerva_loc(4, 'D', 30, False)
+
+    rezultat = s.rezerva_loc(4, 'E', 30, False)
+
+    assert rezultat == "Dezechilibru"
