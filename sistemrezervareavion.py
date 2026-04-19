@@ -27,7 +27,9 @@ class SistemRezervareAvion:
 
     def __init__(self):
         # False = liber, True = ocupat
-        self.locuri_ocupate = [[False] * self.NR_COLOANE for _ in range(self.NR_RANDURI)]
+        self.locuri_ocupate = [
+            [False] * self.NR_COLOANE for _ in range(self.NR_RANDURI)
+        ]
         self.pret_baza = self.PRET_BAZA
         # istoric rezervari: lista de dict-uri cu detalii
         self.rezervari = []
@@ -35,10 +37,11 @@ class SistemRezervareAvion:
     # helpers
     def _litera_la_coloana(self, litera_loc: str) -> int:
         """Converteste litera locului (A-F) la index coloana (0-5)."""
-        return ord(litera_loc.upper()) - ord('A')
+        return ord(litera_loc.upper()) - ord("A")
 
-    def _calculeaza_pret(self, rand: int, varsta_pasager: int,
-                         are_bagaj_cala: bool) -> float:
+    def _calculeaza_pret(
+        self, rand: int, varsta_pasager: int, are_bagaj_cala: bool
+    ) -> float:
 
         pret = self.pret_baza
 
@@ -98,8 +101,9 @@ class SistemRezervareAvion:
             return (dreapta + 1 - stanga) <= self.MAX_DEZECHILIBRU
 
     # system functionalities
-    def rezerva_loc(self, rand: int, litera_loc: str,
-                    varsta_pasager: int, are_bagaj_cala: bool):
+    def rezerva_loc(
+        self, rand: int, litera_loc: str, varsta_pasager: int, are_bagaj_cala: bool
+    ):
         """
         Incearca sa rezerve locul (rand, litera_loc)
 
@@ -116,7 +120,9 @@ class SistemRezervareAvion:
         if not isinstance(rand, int) or isinstance(rand, bool):
             raise TypeError("Randul trebuie sa fie un numar intreg")
         if not (1 <= rand <= self.NR_RANDURI):
-            raise ValueError(f"Rand invalid: {rand}. Trebuie sa fie intre 1 si {self.NR_RANDURI}")
+            raise ValueError(
+                f"Rand invalid: {rand}. Trebuie sa fie intre 1 si {self.NR_RANDURI}"
+            )
 
         # validare litera loc
         if not isinstance(litera_loc, str) or len(litera_loc) != 1:
@@ -149,13 +155,15 @@ class SistemRezervareAvion:
         pret_final = self._calculeaza_pret(rand, varsta_pasager, are_bagaj_cala)
         self.locuri_ocupate[rand - 1][coloana] = True
 
-        self.rezervari.append({
-            "rand": rand,
-            "loc": litera_upper,
-            "varsta": varsta_pasager,
-            "bagaj_cala": are_bagaj_cala,
-            "pret": pret_final,
-        })
+        self.rezervari.append(
+            {
+                "rand": rand,
+                "loc": litera_upper,
+                "varsta": varsta_pasager,
+                "bagaj_cala": are_bagaj_cala,
+                "pret": pret_final,
+            }
+        )
 
         return pret_final
 
@@ -189,7 +197,10 @@ class SistemRezervareAvion:
         self.locuri_ocupate[rand - 1][coloana] = False
         # eliminam ultima rezervare care corespunde acestui loc
         for i in range(len(self.rezervari) - 1, -1, -1):
-            if self.rezervari[i]["rand"] == rand and self.rezervari[i]["loc"] == litera_upper:
+            if (
+                self.rezervari[i]["rand"] == rand
+                and self.rezervari[i]["loc"] == litera_upper
+            ):
                 self.rezervari.pop(i)
                 break
 
@@ -231,12 +242,7 @@ class SistemRezervareAvion:
 
     def nr_locuri_disponibile(self) -> int:
         """Returneaza numarul total de locuri libere."""
-        return sum(
-            1
-            for rand in self.locuri_ocupate
-            for ocupat in rand
-            if not ocupat
-        )
+        return sum(1 for rand in self.locuri_ocupate for ocupat in rand if not ocupat)
 
     def nr_locuri_ocupate(self) -> int:
         """Returneaza numarul total de locuri ocupate."""
@@ -248,7 +254,9 @@ class SistemRezervareAvion:
 
     def reseteaza(self):
         """Elibereaza toate locurile si sterge istoricul rezervarilor."""
-        self.locuri_ocupate = [[False] * self.NR_COLOANE for _ in range(self.NR_RANDURI)]
+        self.locuri_ocupate = [
+            [False] * self.NR_COLOANE for _ in range(self.NR_RANDURI)
+        ]
         self.rezervari.clear()
 
     def vizualizeaza_avion(self):
@@ -260,9 +268,9 @@ class SistemRezervareAvion:
         for rand_idx in range(self.NR_RANDURI):
             for col_idx in range(self.NR_COLOANE):
                 if col_idx == 3:
-                    print(' ', end='')
+                    print(" ", end="")
                 if self.locuri_ocupate[rand_idx][col_idx]:
-                    print(1, end='')
+                    print(1, end="")
                 else:
-                    print('_', end='')
+                    print("_", end="")
             print()
