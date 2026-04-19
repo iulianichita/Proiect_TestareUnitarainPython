@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+.idea/
+
+htmlcov
+.coverage
+
+config/mutation/*.sqlite
+reports/mutation/report.html
+reports/mutation/
