@@ -232,7 +232,7 @@ Start
 Stop
 ```
 
-![CFG06](images\CFG06.drawio.png)
+![CFG06](images/CFG06.drawio.png)
 
 Număr minim teoretic de teste:
 - Statement coverage: 10
@@ -312,7 +312,7 @@ Start
 Stop
 ```
 
-![CFG06](images\CFG07.drawio.png)
+![CFG06](images/CFG07.drawio.png)
 
 Număr minim teoretic de teste:
 - Statement coverage: 6
