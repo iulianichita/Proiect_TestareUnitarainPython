@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 import pytest
 from sistemrezervareavion import SistemRezervareAvion
 
+# Comanda rulare: python -m pytest tests/equivalence/test_equivalence.py -v
 
 @pytest.fixture
 def sistem():
@@ -335,5 +336,95 @@ class TestAnuleaza_Rezervare:
             sistem.anuleaza_rezervare(1, litera_loc)
 
 
+# pt metoda este_loc_disponibil(rand, litera_loc)
 
+class TestEste_Loc_Disponibil:
+
+    # 1. rand
+
+    # clase de echivalenta
+
+    # R_1
+    def test_rand_valid_loc_liber(self, sistem):
+        assert sistem.este_loc_disponibil(1, 'A') == True
+
+    # R_2
+    def test_rand_valid_loc_ocupat(self, sistem):
+        sistem.rezerva_loc(1, 'A', 25, False)
+        assert sistem.este_loc_disponibil(1, 'A') == False
+
+    # R_3
+    @pytest.mark.parametrize("rand", [0, 11, -1])
+    def test_rand_invalid_value_raises_value_error(self, sistem, rand):
+        with pytest.raises(ValueError):
+            sistem.este_loc_disponibil(rand, 'A')
+
+
+    # analiza de frontiera
+
+    # R_1
+    # limita inferioara: rand = 1
+    def test_rand_minim_valid(self, sistem):
+        assert sistem.este_loc_disponibil(1, 'A') == True
+
+    # limita superioara: rand = 10
+    def test_rand_maxim_valid(self, sistem):
+        assert sistem.este_loc_disponibil(10, 'A') == True
+
+    # R_2
+    # rand = 0
+    def test_rand_sub_minim_invalid(self, sistem):
+        with pytest.raises(ValueError):
+            sistem.este_loc_disponibil(0, 'A')
+
+    # rand = 11
+    def test_rand_peste_maxim_invalid(self, sistem):
+        with pytest.raises(ValueError):
+            sistem.este_loc_disponibil(11, 'A')
+
+
+    # 2. litera_loc
+
+    # clase de echivalenta
+
+    # L_1
+    def test_litera_mare_valid_loc_liber(self, sistem):
+        assert sistem.este_loc_disponibil(1, 'B') == True
+
+    # L_2
+    def test_litera_mica_valid_loc_liber(self, sistem):
+        assert sistem.este_loc_disponibil(1, 'c') == True
+
+    # L_3
+    def test_litera_mare_valid_loc_ocupat(self, sistem):
+        sistem.rezerva_loc(1, 'A', 25, False)
+        assert sistem.este_loc_disponibil(1, 'A') == False
+
+    # L_4
+    def test_litera_mica_valid_loc_ocupat(self, sistem):
+        sistem.rezerva_loc(1, 'd', 25, False)
+        assert sistem.este_loc_disponibil(1, 'd') == False
+
+    # L_5
+    @pytest.mark.parametrize("litera_loc", ['I', 'n', '1'])
+    def test_litera_invalid_value_raises_value_error(self, sistem, litera_loc):
+        with pytest.raises(ValueError):
+            sistem.este_loc_disponibil(1, litera_loc)
+
+
+    # analiza de frontiera
+
+    # L_1 si L_2
+    @pytest.mark.parametrize("litera_loc", ['A', 'a'])
+    def test_loc_minim_valid(self, sistem, litera_loc):
+        assert sistem.este_loc_disponibil(1, litera_loc) == True
+
+    @pytest.mark.parametrize("litera_loc", ['F', 'f'])
+    def test_loc_maxim_valid(self, sistem, litera_loc):
+        assert sistem.este_loc_disponibil(1, litera_loc) == True
+
+    @pytest.mark.parametrize("litera_loc", ['G', 'g'])
+    def test_loc_peste_maxim_invalid(self, sistem, litera_loc):
+        with pytest.raises(ValueError):
+            sistem.este_loc_disponibil(1, litera_loc)
 
