@@ -103,7 +103,7 @@ class TestAnulareRezervare(unittest.TestCase):
         sistem.rezerva_loc(1,"A",20,False)
         sistem.rezerva_loc(2,"D",20,False)
         sistem.rezerva_loc(10,"F",20,False)
-        self.assertTrue(sistem.anuleaza_rezervare(10,"F"))
+        self.assertTrue(sistem.anuleaza_rezervare(1,"A"))
 
     
 
