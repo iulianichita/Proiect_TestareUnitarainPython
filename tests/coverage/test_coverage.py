@@ -46,6 +46,14 @@ class Test03CalculeazaPret(unittest.TestCase):
         sistem = SistemRezervareAvion()
         self.assertEqual(sistem._calculeaza_pret(5, 65, False), 50.0)
 
+    # def test_p5_adult_cu_bagaj(self):
+    #     sistem = SistemRezervareAvion()
+    #     self.assertEqual(sistem._calculeaza_pret(5, 30, True), 120.0)
+
+    # def test_p6_infant_cu_bagaj_nu_adauga_supliment(self):
+    #     sistem = SistemRezervareAvion()
+    #     self.assertEqual(sistem._calculeaza_pret(5, 1, True), 10.0)
+
 
 class Test04CalculeazaEchilibru(unittest.TestCase):
     # [S]
@@ -78,6 +86,13 @@ class Test05VerificaEchilibru(unittest.TestCase):
         sistem.rezerva_loc(2, "B", 30, False)
         sistem.rezerva_loc(3, "C", 30, False)
         self.assertFalse(sistem._verifica_echilibru(0))
+
+    # def test_v4_dreapta_refuzata(self):
+    #     sistem = SistemRezervareAvion()
+    #     sistem.rezerva_loc(1, "D", 30, False)
+    #     sistem.rezerva_loc(2, "E", 30, False)
+    #     sistem.rezerva_loc(3, "F", 30, False)
+    #     self.assertFalse(sistem._verifica_echilibru(4))
 
 
 class Test06RezervaLoc(unittest.TestCase):
@@ -282,6 +297,31 @@ class Test07AnuleazaRezervare(unittest.TestCase):
         sistem.rezerva_loc(1, "A", 30, False)
         self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
 
+    def test_a10_anulare_cauta_prin_istoric_pana_gaseste_rezervarea(self):
+        sistem = SistemRezervareAvion()
+
+        sistem.rezerva_loc(1, "A", 30, False)
+        sistem.rezerva_loc(1, "D", 30, False)
+
+        self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
+
+        self.assertFalse(sistem.locuri_ocupate[0][0])  # A eliberat
+        self.assertTrue(sistem.locuri_ocupate[0][3])   # D ramane ocupat
+
+        self.assertEqual(len(sistem.rezervari), 1)
+        self.assertEqual(sistem.rezervari[0]["loc"], "D")
+
+    def test_a11_anulare_loc_ocupat_fara_rezervare_in_istoric(self):
+        sistem = SistemRezervareAvion()
+
+        sistem.locuri_ocupate[0][0] = True
+        sistem.rezervari = []
+
+        self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
+
+        self.assertFalse(sistem.locuri_ocupate[0][0])
+        self.assertEqual(sistem.rezervari, [])
+
 
 class Test08EsteLocDisponibil(unittest.TestCase):
     # [S] + [B] + [C]
@@ -298,6 +338,11 @@ class Test08EsteLocDisponibil(unittest.TestCase):
     def test_e3_loc_liber(self):
         sistem = SistemRezervareAvion()
         self.assertTrue(sistem.este_loc_disponibil(1, "A"))
+
+    # def test_e4_loc_ocupat(self):
+    #     sistem = SistemRezervareAvion()
+    #     sistem.rezerva_loc(1, "A", 30, False)
+    #     self.assertFalse(sistem.este_loc_disponibil(1, "A"))
 
 
 class Test09LocuriDisponibile(unittest.TestCase):
