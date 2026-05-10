@@ -2,7 +2,8 @@
 module-path = "sistemrezervareavion.py"
 timeout = 10.0
 excluded-modules = []
-test-command = "pytest tests/mutation/test_mutation.py -v"
+test-command = "python -m pytest tests/mutation/test_mutation.py -q"
 
 [cosmic-ray.distributor]
 name = "local"
+workers = 4

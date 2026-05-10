@@ -8,5 +8,5 @@ htmlcov
 .coverage
 
 config/mutation/*.sqlite
-reports/mutation/report.html
+reports/mutation/report1.html
 reports/mutation/
