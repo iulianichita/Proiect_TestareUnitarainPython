@@ -192,6 +192,11 @@ class TestRezerva_Loc:
     def test_varsta_senior_minim_valid(self, sistem, varsta_pasager):
         assert sistem.rezerva_loc(1, 'A', varsta_pasager, False) == 75.0
 
+    # V_5
+    @pytest.mark.parametrize("varsta_pasager", [-1])
+    def test_varsta_invalid_value_raises_value_error(self, sistem, varsta_pasager):
+        with pytest.raises(ValueError):
+            sistem.rezerva_loc(1, 'A', varsta_pasager, False) == 150.0
     # 4. are_bagaj_cala
 
     # clase de echivalenta
