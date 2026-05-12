@@ -316,8 +316,8 @@ Stop
 
 Număr minim teoretic de teste:
 - Statement coverage: 6
-- Branch coverage: 6
-- Condition coverage: 8
+- Branch coverage: 8
+- Condition coverage: 11
 
 Set minim
 
@@ -336,6 +336,8 @@ Set minim
 - A4: literă invalidă
 - A5: loc deja liber
 - A6: anulare reușită
+- A10: loc ocupat, dar prima rezervare verificată în istoric nu corespunde; bucla continuă și apoi găsește rezervarea corectă
+- A11: loc marcat ca ocupat, dar fără rezervare în istoric; bucla se termină fără break, apoi funcția returnează True
 
 #### Condition coverage
 - A1: rand="1"
@@ -345,7 +347,13 @@ Set minim
 - A5: litera_loc=5
 - A6: litera_loc="AB"
 - A7: litera_loc="Z"
-- A8: loc valid, deja liber / respectiv rezervat
+- A8: loc valid, deja liber
+- A9: loc valid și rezervat
+`Acoperă ramura False pentru condiția not self.locuri_ocupate[rand - 1][coloana].`
+- A10: rezervarea căutată nu este ultima din istoric
+`Acoperă ramura False a condiției compuse din buclă: rezervari[i]["rand"] == rand and rezervari[i]["loc"] == litera_upper.`
+- A11: loc ocupat fără rezervare în istoric
+`Acoperă ieșirea din bucla for fără găsirea unei rezervări corespunzătoare.`
 
 ## 8) `este_loc_disponibil`
 

@@ -33,7 +33,7 @@ cd "${ROOT_DIR}"
 
 # Executa testele de acoperire si genereaza raportul HTML
 "${PYTHON_BIN}" -m coverage erase
-"${PYTHON_BIN}" -m coverage run -m pytest "${TEST_FILE}" -v
+"${PYTHON_BIN}" -m coverage run --branch -m pytest "${TEST_FILE}" -v
 "${PYTHON_BIN}" -m coverage html -d "${REPORT_DIR}"
 
 echo "Raportul HTML de acoperire a fost generat in: ${REPORT_DIR}"
