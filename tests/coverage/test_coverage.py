@@ -46,14 +46,6 @@ class Test03CalculeazaPret(unittest.TestCase):
         sistem = SistemRezervareAvion()
         self.assertEqual(sistem._calculeaza_pret(5, 65, False), 50.0)
 
-    # def test_p5_adult_cu_bagaj(self):
-    #     sistem = SistemRezervareAvion()
-    #     self.assertEqual(sistem._calculeaza_pret(5, 30, True), 120.0)
-
-    # def test_p6_infant_cu_bagaj_nu_adauga_supliment(self):
-    #     sistem = SistemRezervareAvion()
-    #     self.assertEqual(sistem._calculeaza_pret(5, 1, True), 10.0)
-
 
 class Test04CalculeazaEchilibru(unittest.TestCase):
     # [S]
@@ -87,230 +79,184 @@ class Test05VerificaEchilibru(unittest.TestCase):
         sistem.rezerva_loc(3, "C", 30, False)
         self.assertFalse(sistem._verifica_echilibru(0))
 
-    # def test_v4_dreapta_refuzata(self):
-    #     sistem = SistemRezervareAvion()
-    #     sistem.rezerva_loc(1, "D", 30, False)
-    #     sistem.rezerva_loc(2, "E", 30, False)
-    #     sistem.rezerva_loc(3, "F", 30, False)
-    #     self.assertFalse(sistem._verifica_echilibru(4))
-
 
 class Test06RezervaLoc(unittest.TestCase):
-    # [S] + [B]
-    def test_r1_rand_tip_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(TypeError):
-            sistem.rezerva_loc("1", "A", 30, False)
 
-    def test_r2_rand_interval_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.rezerva_loc(0, "A", 30, False)
-
-    def test_r3_litera_format_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.rezerva_loc(1, "AB", 30, False)
-
-    def test_r4_litera_domeniu_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.rezerva_loc(1, "Z", 30, False)
-
-    def test_r5_varsta_tip_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(TypeError):
-            sistem.rezerva_loc(1, "A", "30", False)
-
-    def test_r6_varsta_negativa(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.rezerva_loc(1, "A", -1, False)
-
-    def test_r7_bagaj_tip_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(TypeError):
-            sistem.rezerva_loc(1, "A", 30, "da")
-
-    def test_r8_rezervare_valida(self):
-        sistem = SistemRezervareAvion()
-        self.assertEqual(sistem.rezerva_loc(1, "A", 30, True), 170.0)
-
-    def test_r9_loc_ocupat(self):
-        sistem = SistemRezervareAvion()
-        sistem.rezerva_loc(1, "A", 30, False)
-        self.assertEqual(sistem.rezerva_loc(1, "A", 30, False), "Ocupat")
-
-    def test_r10_dezechilibru(self):
-        sistem = SistemRezervareAvion()
-        sistem.rezerva_loc(1, "A", 30, False)
-        sistem.rezerva_loc(2, "B", 30, False)
-        sistem.rezerva_loc(3, "C", 30, False)
-        self.assertEqual(sistem.rezerva_loc(4, "A", 30, False), "Dezechilibru")
-
-    # [C]
+    # [S] + [B] + [C]
     def test_r1_rand_nu_este_int(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.rezerva_loc("1", "A", 30, False)
 
+    # [C]
     def test_r2_rand_este_bool(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.rezerva_loc(True, "A", 30, False)
 
+    # [S] + [B] + [C]
     def test_r3_rand_sub_limita(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.rezerva_loc(0, "A", 30, False)
 
+    # [C]
     def test_r4_rand_peste_limita(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.rezerva_loc(11, "A", 30, False)
 
+    # [C]
     def test_r5_litera_nu_este_string(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
-            sistem.rezerva_loc(1, 5, 30, False)
+            sistem.rezerva_loc(1, ["A"], 30, False)
 
+    # [S] + [B] + [C]
     def test_r6_litera_are_lungime_invalida(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.rezerva_loc(1, "AB", 30, False)
 
+    # [S] + [B] + [C]
     def test_r7_litera_nu_este_in_domeniu(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.rezerva_loc(1, "Z", 30, False)
 
+    # [S] + [B] + [C]
     def test_r8_varsta_nu_este_int(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.rezerva_loc(1, "A", "30", False)
 
+    # [C]
     def test_r9_varsta_este_bool(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.rezerva_loc(1, "A", True, False)
 
+    # [S] + [B] + [C]
     def test_r10_varsta_negativa(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.rezerva_loc(1, "A", -1, False)
 
+    # [S] + [B] + [C]
     def test_r11_bagaj_nu_este_bool(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.rezerva_loc(1, "A", 30, "da")
 
+    # [S] + [B] + [C]
     def test_r12_rezervare_valida(self):
         sistem = SistemRezervareAvion()
         self.assertEqual(sistem.rezerva_loc(1, "A", 30, True), 170.0)
 
+    # [S] + [B] + [C]
     def test_r13_loc_ocupat(self):
         sistem = SistemRezervareAvion()
         sistem.rezerva_loc(1, "A", 30, False)
-        self.assertEqual(sistem.rezerva_loc(1, "A", 40, True), "Ocupat")
 
+        self.assertEqual(
+            sistem.rezerva_loc(1, "A", 40, True),
+            "Ocupat"
+        )
+
+    # [S] + [B] + [C]
     def test_r14_dezechilibru(self):
         sistem = SistemRezervareAvion()
+
         sistem.rezerva_loc(1, "A", 30, False)
         sistem.rezerva_loc(2, "B", 30, False)
         sistem.rezerva_loc(3, "C", 30, False)
-        self.assertEqual(sistem.rezerva_loc(4, "A", 30, False), "Dezechilibru")
+
+        self.assertEqual(
+            sistem.rezerva_loc(4, "A", 30, False),
+            "Dezechilibru"
+        )
 
 
 class Test07AnuleazaRezervare(unittest.TestCase):
-    # [S] + [B]
-    def test_a1_rand_tip_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(TypeError):
-            sistem.anuleaza_rezervare(True, "A")
 
-    def test_a2_rand_valoare_invalida(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.anuleaza_rezervare(11, "A")
-
-    def test_a3_litera_format_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.anuleaza_rezervare(1, "AB")
-
-    def test_a4_litera_domeniu_invalid(self):
-        sistem = SistemRezervareAvion()
-        with self.assertRaises(ValueError):
-            sistem.anuleaza_rezervare(1, "Z")
-
-    def test_a5_loc_deja_liber(self):
-        sistem = SistemRezervareAvion()
-        self.assertFalse(sistem.anuleaza_rezervare(1, "A"))
-
-    def test_a6_anulare_reusita(self):
-        sistem = SistemRezervareAvion()
-        sistem.rezerva_loc(1, "A", 30, False)
-        self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
-
-    # [C]
+    # [S] + [B] + [C]
     def test_a1_rand_nu_este_int(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.anuleaza_rezervare("1", "A")
 
+    # [C]
     def test_a2_rand_este_bool(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(TypeError):
             sistem.anuleaza_rezervare(True, "A")
 
+    # [S] + [B] + [C]
     def test_a3_rand_sub_limita(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.anuleaza_rezervare(0, "A")
 
+    # [C]
     def test_a4_rand_peste_limita(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.anuleaza_rezervare(11, "A")
 
+    # [C]
     def test_a5_litera_nu_este_string(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
-            sistem.anuleaza_rezervare(1, 5)
+            sistem.anuleaza_rezervare(1, ["A"])
 
+    # [S] + [B] + [C]
     def test_a6_litera_are_lungime_invalida(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.anuleaza_rezervare(1, "AB")
 
+    # [S] + [B] + [C]
     def test_a7_litera_nu_este_in_domeniu(self):
         sistem = SistemRezervareAvion()
         with self.assertRaises(ValueError):
             sistem.anuleaza_rezervare(1, "Z")
 
+    # [S] + [B] + [C]
     def test_a8_loc_deja_liber(self):
         sistem = SistemRezervareAvion()
         self.assertFalse(sistem.anuleaza_rezervare(1, "A"))
 
+    # [S] + [B] + [C]
     def test_a9_anulare_reusita(self):
         sistem = SistemRezervareAvion()
-        sistem.rezerva_loc(1, "A", 30, False)
-        self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
 
+        sistem.rezerva_loc(1, "A", 30, False)
+
+        self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
+        self.assertFalse(sistem.locuri_ocupate[0][0])
+        self.assertEqual(sistem.rezervari, [])
+
+    # [B] + [C]
     def test_a10_anulare_cauta_prin_istoric_pana_gaseste_rezervarea(self):
         sistem = SistemRezervareAvion()
 
         sistem.rezerva_loc(1, "A", 30, False)
         sistem.rezerva_loc(1, "D", 30, False)
+        sistem.rezerva_loc(2, "D", 30, False)
 
         self.assertTrue(sistem.anuleaza_rezervare(1, "A"))
 
-        self.assertFalse(sistem.locuri_ocupate[0][0])  # A eliberat
-        self.assertTrue(sistem.locuri_ocupate[0][3])   # D ramane ocupat
+        self.assertFalse(sistem.locuri_ocupate[0][0])  # 1A eliberat
+        self.assertTrue(sistem.locuri_ocupate[0][3])   # 1D ramane ocupat
+        self.assertTrue(sistem.locuri_ocupate[1][3])   # 2D ramane ocupat
 
-        self.assertEqual(len(sistem.rezervari), 1)
+        self.assertEqual(len(sistem.rezervari), 2)
         self.assertEqual(sistem.rezervari[0]["loc"], "D")
+        self.assertEqual(sistem.rezervari[0]["rand"], 1)
+        self.assertEqual(sistem.rezervari[1]["loc"], "D")
+        self.assertEqual(sistem.rezervari[1]["rand"], 2)
 
+    # [B] + [C]
     def test_a11_anulare_loc_ocupat_fara_rezervare_in_istoric(self):
         sistem = SistemRezervareAvion()
 
@@ -338,11 +284,6 @@ class Test08EsteLocDisponibil(unittest.TestCase):
     def test_e3_loc_liber(self):
         sistem = SistemRezervareAvion()
         self.assertTrue(sistem.este_loc_disponibil(1, "A"))
-
-    # def test_e4_loc_ocupat(self):
-    #     sistem = SistemRezervareAvion()
-    #     sistem.rezerva_loc(1, "A", 30, False)
-    #     self.assertFalse(sistem.este_loc_disponibil(1, "A"))
 
 
 class Test09LocuriDisponibile(unittest.TestCase):
