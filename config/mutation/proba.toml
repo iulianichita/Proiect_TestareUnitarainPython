@@ -1,8 +1,8 @@
 [cosmic-ray]
 module-path = "sistemrezervareavion.py"
-timeout = 10.0
+timeout = 3.0
 excluded-modules = []
-test-command = "python -m pytest tests/mutation/test_mutation.py -q"
+test-command = "python -m pytest tests/mutation/test_mutation.py -q --tb=short --disable-warnings"
 
 [cosmic-ray.distributor]
 name = "local"
