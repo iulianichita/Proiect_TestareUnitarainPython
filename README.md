@@ -1281,6 +1281,332 @@ Rezultate:
 ![RaportAI](reports/coverage/images/RaportAI.png)
 
 
+# Circuite independente
+
+In aceasta secțiune a proiectului am urmărit testarea circuitelor independente. Aceasta metoda are la baza construirea grafului de flux de control pentru funcția testata, calcularea complexității ciclomatice folosind formula lui McCabe, identificarea circuitelor independente si proiectarea unui set minim de teste care acoperă toate traseele independente.
+
+
+Pentru analiza testelor si a funcțiilor folosim următoarele formule:
+
+```text
+V(G) = e – n + 1
+```
+
+```text
+acoperirea la nivel de ramura ≤ complexitatea ciclomatica ≤ numărul de trasee
+```
+
+Prima formula calculează numărul de circuite linear independente, unde e reprezintă numărul de muchii si n numărul de noduri din graful de flux de control. A doua formula reprezintă limitele formate de complexitatea ciclomatica in contextul testelor structurale.
+
+
+## Funcția Rezerva Loc
+
+Funcția realizează rezervarea unui loc in avion si conține validări de input, condiții multiple, decizii de tip if si apeluri către alte funcții. Aceasta reprezintă principala funcționalitate a sistemului.
+
+Avem următorul CFG conform căruia vom calcula complexitatea ciclomatica:
+
+![CFG](reports/coverage/images/CFG06.png)
+
+Observam 24 muchii si 15 noduri, astfel avem 10 circuite linear independente. Circuitele asociate sunt formate din drumurile de validare a datelor de intrare si cazurile in care acestea sunt invalide si rezervările de locuri realizate cu succes sau eșuate.
+
+- C1: tip invalid pentru rând
+- C2: valoare invalida pentru rând
+- C3: tip invalid pentru litera
+- C4: valoare invalida pentru litera
+- C5: tipul invalid pentru vârstă
+- C6: valoare invalida pentru vârstă
+- C7: tip invalid pentru bagaj
+- C8: locul ales este ocupat
+- C9: locul ales provoacă dezechilibru
+- C10: rezervare valida
+
+## Funcția Anulează Rezervare
+
+Funcția anulează o rezervare existența si validează parametrii, verifica existența rezervării, parcurge lista rezervărilor si șterge rezervarea corespunzătoare. Aceasta conține condiții si o bucla repetitivă.
+
+Avem următorul CFG conform căruia vom calcula complexitatea ciclomatica:
+
+![CFG](reports/coverage/images/CFG07.png)
+
+Observam 19 muchii si 13 noduri, astfel avem 7 circuite linear independente. Circuitele sunt formate din validarea intrărilor si parcurgerea buclei for pentru găsirea rezervării corecte.
+
+- C1: tip invalid pentru rând
+- C2: valoare invalida pentru rând
+- C3: tip invalid pentru litera
+- C4: valoare invalida pentru litera
+- C5: locul este deja liber
+- C6: eliberarea primul loc, o singura iterație prin bucla
+- C7: eliberarea ultimului loc, se trece prin bucla de mai multe ori
+
+## Funcția Locuri Disponibile
+
+Funcția returnează lista locurilor libere din avion. Aceasta conține doua bucle repetitive imbricate, condiția de verificare a locului si adăugarea in lista daca este liber.
+
+Urmarim următorul CFG pentru a calcula complexitatea ciclomatica si observam ca avem 4 circuite independente.
+
+![Code](reports/circuits/images/cod.png)
+
+Circuitele sunt formate din buclele de parcurgere a rândurilor si coloanelor avionului si condițiile de verificare a disponibilității locului.
+
+- C1: avionul este gol
+- C2: o singura iteratie, loc liber
+- C3: loc ocupat, ramura False
+- C4: parcurgerea completa a locurilor din avion
+
+# Raport AI
+
+Pentru generarea automată de teste pentru circuitele independente am folosit tool-ul ChatGPT. Am generat teste pentru funcția `rezerva_loc` si am comparat rezultatele primite cu codul personal.
+
+## Prompt folosit
+
+> Am urmatoarea functie scrisa in python:
+
+```python
+def rezerva_loc(
+        self, rand: int, litera_loc: str, varsta_pasager: int, are_bagaj_cala: bool):
+        """
+        Incearca sa rezerve locul (rand, litera_loc)
+        Returneaza:
+            float  - pretul final daca rezervarea a reusit
+            "Ocupat" - daca locul era deja rezervat
+            "Dezechilibru" - daca rezervarea ar dezechilibra avionul peste pragul MAX_DEZECHILIBRU
+
+        Raises:
+            ValueError - daca randul sau litera nu sunt valide
+            TypeError  - daca varsta nu e int sau bool-ul nu e bool
+        """
+        # validare rand
+        if not isinstance(rand, int) or isinstance(rand, bool):
+            raise TypeError("Randul trebuie sa fie un numar intreg")
+        if not (1 <= rand <= self.NR_RANDURI):
+            raise ValueError(
+                f"Rand invalid: {rand}. Trebuie sa fie intre 1 si {self.NR_RANDURI}")
+
+        # validare litera loc
+        if not isinstance(litera_loc, str) or len(litera_loc) != 1:
+            raise ValueError("Litera locului trebuie sa fie un singur caracter (A-F)")
+        litera_upper = litera_loc.upper()
+        if litera_upper not in self.LITERE_VALIDE:
+            raise ValueError(f"Loc invalid: '{litera_loc}'. Trebuie sa fie una din A-F")
+
+        # validare varsta
+        if not isinstance(varsta_pasager, int) or isinstance(varsta_pasager, bool):
+            raise TypeError("Varsta trebuie sa fie un numar intreg")
+        if varsta_pasager < 0:
+            raise ValueError("Varsta nu poate fi negativa")
+
+        # validare bagaj
+        if not isinstance(are_bagaj_cala, bool):
+            raise TypeError("are_bagaj_cala trebuie sa fie True sau False")
+
+        coloana = self._litera_la_coloana(litera_upper)
+
+        # verificare disponibilitate
+        if self.locuri_ocupate[rand - 1][coloana]:
+            return "Ocupat"
+
+        # verificare echilibru lateral
+        if not self._verifica_echilibru(coloana):
+            return "Dezechilibru"
+
+        # calculare pret si efectuare rezervare
+        pret_final = self._calculeaza_pret(rand, varsta_pasager, are_bagaj_cala)
+        self.locuri_ocupate[rand - 1][coloana] = True
+
+        self.rezervari.append(
+            {
+                "rand": rand,
+                "loc": litera_upper,
+                "varsta": varsta_pasager,
+                "bagaj_cala": are_bagaj_cala,
+                "pret": pret_final,
+            }
+        )
+
+        return pret_final
+```
+
+> Aceasta face parte dintr-un sistem de rezervare bilete de avion, scris tot in python sub forma unei clase `SistemRezervareAvion`. Ajuta-ma te rog sa scriu teste pentru circuite independente pentru a testa sistemul meu software.
+
+## Raspuns primit
+
+> Pentru funcția `rezerva_loc`, testarea prin circuite independente (*basis path testing* / *independent paths*) înseamnă să identifici toate ramurile logice importante și să scrii teste care execută fiecare traseu independent din funcție.
+>
+> Funcția ta are multe decizii (`if`), deci e foarte potrivită pentru acest tip de testare.
+
+### 1. Identificarea circuitelor independente
+
+Funcția are următoarele ramuri importante:
+
+- `rand` invalid ca tip
+- `rand` în afara intervalului
+- `litera_loc` invalidă ca format
+- `litera_loc` invalidă ca valoare
+- `varsta_pasager` invalidă ca tip
+- `varsta_pasager < 0`
+- `are_bagaj_cala` invalid ca tip
+- Loc deja ocupat
+- Dezechilibru avion
+- Rezervare cu succes
+
+Acestea sunt circuitele independente principale.
+
+### 2. Structura recomandată pentru teste
+
+Cel mai bine este să folosești `pytest`.
+
+Instalare:
+
+```bash
+pip install pytest
+```
+
+### 3. Exemplu complet de fișier de teste
+
+`test_ai_generated.py` — fișier aflat in `tests/circuits/`.
+
+### 4. Ce acoperă aceste teste
+
+Aceste teste verifică:
+
+- validări de input
+- excepții
+- ramuri `if`
+- rezervare reușită
+- efecte secundare:
+  - modificarea matricei `locuri_ocupate`
+  - adăugarea în `rezervari`
+
+### 5. Cum rulezi testele
+
+Din terminal:
+
+```bash
+pytest -v
+```
+
+### 6. Ce înseamnă „circuite independente” aici
+
+În termeni de testare structurală, fiecare test execută o cale logică diferită prin CFG (*Control Flow Graph*).
+
+Exemplu:
+
+#### Circuit succes
+
+```text
+start
+→ validare rand
+→ validare litera
+→ validare varsta
+→ validare bagaj
+→ verificare ocupare
+→ verificare echilibru
+→ calcul pret
+→ rezervare
+→ return pret
+```
+
+#### Circuit loc ocupat
+
+```text
+start
+→ validari
+→ verificare ocupare = True
+→ return "Ocupat"
+```
+
+#### Circuit dezechilibru
+
+```text
+start
+→ validari
+→ ocupat = False
+→ echilibru = False
+→ return "Dezechilibru"
+```
+
+### 7. Recomandare foarte importantă
+
+Pentru proiecte academice, profesorii apreciază dacă menționezi și complexitatea ciclomatică.
+
+Funcția ta are aproximativ:
+
+```text
+V(G) = E − N + 2
+```
+
+Sau mai simplu:
+
+```text
+număr_decizii + 1
+```
+
+Ai aproximativ 9 decizii ⇒ complexitate ≈ 10. Asta justifică existența celor aproximativ 10 teste independente.
+
+### 8. Îmbunătățire profesională
+
+Poți grupa testele cu `pytest.mark.parametrize`.
+
+Exemplu:
+
+```python
+@pytest.mark.parametrize("rand_invalid", [0, -1, 999])
+def test_rand_invalid(sistem, rand_invalid):
+    with pytest.raises(ValueError):
+        sistem.rezerva_loc(rand_invalid, "A", 25, True)
+```
+
+### 9. Ce ai putea testa suplimentar
+
+Pentru acoperire foarte bună:
+
+- litere mici (`"a"` → `"A"`)
+- vârste extreme
+- preț calculat corect
+- multiple rezervări
+- prag exact de dezechilibru
+- rezervare ultimul loc disponibil
+
+### 10. Concluzie
+
+Pentru testarea prin circuite independente:
+
+- identifici fiecare ramură logică
+- scrii minimum un test pentru fiecare cale independentă
+- verifici:
+  - excepții
+  - valori returnate
+  - modificări de stare
+
+Setul de teste de mai sus reprezintă o implementare foarte bună pentru metoda *Basis Path Testing* asupra funcției tale.
+
+## Rezultatul rulării testelor generate
+
+Am rulat testele generate si am obținut următorul rezultat in terminal:
+
+![Raport Ai](reports/circuits/images/raport_ai.png)
+
+Observam cum testele generate cu inteligență artificială au fost rulate cu success.
+
+## Diferențe intre testele generate si cele scrise manual
+
+Testele scrise manual verifica scenarii concrete de utilizare ale sistemului, fără a modifica funcțiile clasei, astfel sunt mai apropiate de comportamentul real al aplicației.
+
+In cazul verificării echilibrului avionului la rezervarea unui loc, testele scrise construiesc natural starea sistemului prin rezervări succesive, oferind o validare mai realista. Varianta generată AI utilizează `monkeypatch` pentru a forța rezultatul funcției `verifica_echilibru`.
+
+Testele manuale sunt clare si testează programul in funcție de circuitele independente găsite, evitând implementarea interna a metodelor private. Acest lucru face testele mai stabile si îmbunătățește lizibilitatea codului.
+
+De asemenea, se observa utilizarea a doua framework-uri pentru testare diferite, `unittest` si `pytest`.
+
+Testele scrise manual pun accent pe validarea completa a sistemului, verificând gestionarea excepțiilor, rezervarea locurilor, detectarea locurilor ocupate si a comportamentului corect pentru datele invalide.
+
+Testele generate automat includ verificări suplimentare asupra stării interne a obiectului, insa acestea pot conduce la o dependență mai mare de detaliile implementării.
+
+Desi script-ul generat de ChatGPT oferă o acoperire structurala extinsă, testele scrise manual oferă o reprezentare mai fidelă a circuitelor independente, astfel fiind mai accesibile pentru dezvoltarea aplicației.
+
+In concluzie, testele scrise oferă o abordare mai practica si reprezentativa pentru cerințele proiectului, concentrându-se pe scenarii reale de utilizare. Comparativ cu testele generate cu ajutorul inteligenței artificiale, acestea sunt mai clare si se focusează pe circuitele independente date de graful de flux de control.
+
+
 # Mutation Testing
 
 Comandă de rulare a testelor:
