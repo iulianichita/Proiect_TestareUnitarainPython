@@ -9,4 +9,4 @@ htmlcov
 
 config/mutation/*.sqlite
 reports/mutation/report1.html
-reports/mutation/
+reports/mutation/report

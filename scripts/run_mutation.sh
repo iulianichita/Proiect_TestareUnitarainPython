@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_FILE="$ROOT_DIR/config/mutation/proba.toml"
 SESSION_FILE="$ROOT_DIR/config/mutation/tutorial.sqlite"
 
-REPORT_DIR="$ROOT_DIR/reports/mutation"
+REPORT_DIR="$ROOT_DIR/reports/mutation/report"
 REPORT_FILE="$REPORT_DIR/newReport.html"
 
 TARGET_FILE="$ROOT_DIR/sistemrezervareavion.py"

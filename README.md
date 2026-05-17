@@ -1276,3 +1276,55 @@ Prompt:
 Rezultate:
 
 ![RaportAI](reports/coverage/images/RaportAI.png)
+
+
+# Mutation Testing
+
+## Testele
+
+*Mutation testing* verifică dacă testele detectează modificări introduse artificial în cod, cum ar fi:
+
+- schimbarea operatorilor logici (`<=`, `<`, `>=`, `>`, `==`);
+- inversarea condițiilor;
+- eliminarea unor instrucțiuni;
+- modificarea valorilor constante;
+- schimbarea condițiilor de validare.
+
+Spre exemplu, printre mutanții generați s-au numărat următoarele modificări aplicate clasei originale:
+
+- modificarea pragului pentru echilibru;
+- modificarea prețurilor;
+- alterarea numărului de rânduri sau coloane.
+
+Testele folosite pentru a omorî mutanții au fost de mai multe tipuri:
+
+- teste funcționale;
+- teste de validare;
+- teste de tip boundary testing;
+- teste parametrizate;
+- teste pentru mutanți specifici.
+
+Inițial, am pornit de la **23 de teste**, care au fost rulate pe **459 de mutanți**. În urma acestei rulări, **136 de mutanți au rămas în viață**. Pentru a ajunge la **0 mutanți rămași în viață**, a fost nevoie de un total de **51 de teste**. Nu au existat mutanți echivalenți.
+
+## Cosmic Ray
+
+Am ales să folosesc **Cosmic Ray** deoarece mi-a permis execuție paralelă, folosind setarea `workers = 4`, ceea ce a redus considerabil durata rulării testelor.
+
+Fișierul de configurare `proba.toml` a fost util deoarece a permis modificarea ușoară a parametrilor de execuție, oferind mai multă flexibilitate în procesul de testare.
+
+Un alt avantaj important a fost posibilitatea de a monitoriza progresul mutațiilor la fiecare **15 secunde**. Deși atât **Cosmic Ray**, cât și **mutmut** sunt recomandate pentru mutation testing, aceste avantaje practice, împreună cu documentația ușor de urmărit, m-au determinat să folosesc Cosmic Ray.
+
+## Raport AI
+
+Mesajele analizate în această secțiune au fost generate în momentul în care încă existau **57 de mutanți în viață**. După adăugarea testului `test_echilibru_mare_stanga_blocat`, majoritatea mutanților asociați metodei `avion_plin` au fost omorâți.
+
+Rezultate:
+
+![RaportAI](reports/mutation/images/raport_ai1.png)
+![RaportAI](reports/mutation/images/raport_ai2.png)
+
+Solicitând unui model AI un set de teste pentru clasa originală, destinat mutation testing-ului, am primit **27 de teste**, salvate în fișierul `testeAI.py`.
+
+Dintre cei **459 de mutanți**, după rularea testelor generate de AI, **140 de mutanți au rămas în viață**, rezultat prezent în `reportTesteAI`.
+
+Prin comparație, primele **23 de teste create manual** au lăsat în viață **136 de mutanți**. Diferența nu este foarte mare în acest caz, însă, în proiecte mai mari, o astfel de redundanță ar putea deveni problematică, deoarece ar crește numărul de teste fără a îmbunătăți semnificativ eficiența suitei de testare.
