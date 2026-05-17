@@ -6,6 +6,9 @@
 - Năvodaru Denisa-Ștefania (341)
 - Nichita Iulia-Nicoleta (341)
 
+## [Demo](https://www.youtube.com/watch?v=P4i7amHsYxk)
+
+
 ### Introducere
 
 Clasa `SistemRezervareAvion` este concepută pentru a gestiona procesul de rezervare a locurilor unui avion cu 10 rânduri, numerotate de la 1 la 10, 6 locuri pe rând, A-F, delimitate de un culoar. 
