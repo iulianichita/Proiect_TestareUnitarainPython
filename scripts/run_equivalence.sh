@@ -29,12 +29,7 @@ fi
 
 cd "${ROOT_DIR}"
 
-# Permite transmiterea unor argumente suplimentare catre pytest
-if [[ $# -gt 0 ]]; then
-  EXTRA_ARGS="$@"
-else
-  EXTRA_ARGS="-q --tb=short"
-fi
+EXTRA_ARGS="-v"
 
 echo "Execut testele de echivalenta in ${TEST_DIR}"
 "${PYTHON_BIN}" -m pytest "${TEST_FILE}" ${EXTRA_ARGS}
