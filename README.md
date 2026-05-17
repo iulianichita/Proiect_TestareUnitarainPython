@@ -1280,6 +1280,12 @@ Rezultate:
 
 # Mutation Testing
 
+Comandă de rulare a testelor:
+
+```bash
+python -m pytest tests/mutation/test_mutation.py -q --tb=short --disable-warnings
+```
+
 ## Testele
 
 *Mutation testing* verifică dacă testele detectează modificări introduse artificial în cod, cum ar fi:
